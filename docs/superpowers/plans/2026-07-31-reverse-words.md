@@ -6,7 +6,7 @@
 
 ### Task 1: Тест
 
-- [ ] В `tests/test_core.py` добавить ровно этот тестовый класс (другие тесты не добавлять — минимальный смоук):
+- [x] В `tests/test_core.py` добавить ровно этот тестовый класс (другие тесты не добавлять — минимальный смоук):
 
 ```python
 class ReverseWordsTests(unittest.TestCase):
@@ -16,7 +16,7 @@ class ReverseWordsTests(unittest.TestCase):
 
 Импорт дополнить `reverse_words`.
 
-- [ ] Прогнать `python3 -m unittest discover -s tests -v` — новый тест падает (ImportError).
+- [x] Прогнать `python3 -m unittest discover -s tests -v` — новый тест падает (ImportError).
 
 ### Task 2: Реализация
 
