@@ -20,7 +20,7 @@ class ReverseWordsTests(unittest.TestCase):
 
 ### Task 2: Реализация
 
-- [ ] В `textkit/core.py` добавить:
+- [x] В `textkit/core.py` добавить:
 
 ```python
 def reverse_words(text: str) -> str:
@@ -33,10 +33,10 @@ def reverse_words(text: str) -> str:
     return " ".join(text.split()[::-1])
 ```
 
-- [ ] Экспортировать из `textkit/__init__.py` (добавить в импорт и `__all__`).
-- [ ] Прогнать тесты — зелёные.
+- [x] Экспортировать из `textkit/__init__.py` (добавить в импорт и `__all__`).
+- [x] Прогнать тесты — зелёные.
 
 ### Task 3: Changelog
 
-- [ ] Обновить `CHANGELOG.md` по правилам репозитория (скилл changelog).
+- [x] Обновить `CHANGELOG.md` по правилам репозитория (скилл changelog).
 - [ ] Финальный прогон `python3 -m unittest discover -s tests -v`.
