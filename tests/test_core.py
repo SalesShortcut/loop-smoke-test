@@ -22,6 +22,9 @@ class TruncateTests(unittest.TestCase):
         self.assertEqual(truncate("hello world", 8), "hello w…")
         self.assertEqual(len(truncate("hello world", 8)), 8)
 
+    def test_width_one_returns_ellipsis_only(self):
+        self.assertEqual(truncate("hello", 1), "…")
+
     def test_non_positive_width_raises(self):
         for width in (0, -1):
             with self.subTest(width=width):
