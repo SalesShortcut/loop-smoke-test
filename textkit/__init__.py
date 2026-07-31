@@ -1,3 +1,3 @@
-from .core import word_count
+from .core import truncate, word_count
 
-__all__ = ["word_count"]
+__all__ = ["truncate", "word_count"]
