@@ -1,3 +1,3 @@
-from .core import word_count
+from .core import shout, word_count
 
-__all__ = ["word_count"]
+__all__ = ["shout", "word_count"]
