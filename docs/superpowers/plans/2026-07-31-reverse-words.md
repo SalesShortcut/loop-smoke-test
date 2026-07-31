@@ -1,0 +1,42 @@
+# reverse_words() Implementation Plan
+
+**Goal:** добавить `reverse_words(text)` в textkit по спеке `docs/superpowers/specs/2026-07-31-reverse-words-design.md`.
+
+Выполнять задачи по порядку, код брать из блоков ниже как есть. После каждой задачи — коммит.
+
+### Task 1: Тест
+
+- [ ] В `tests/test_core.py` добавить ровно этот тестовый класс (другие тесты не добавлять — минимальный смоук):
+
+```python
+class ReverseWordsTests(unittest.TestCase):
+    def test_reverses_word_order(self):
+        self.assertEqual(reverse_words("a b c"), "c b a")
+```
+
+Импорт дополнить `reverse_words`.
+
+- [ ] Прогнать `python3 -m unittest discover -s tests -v` — новый тест падает (ImportError).
+
+### Task 2: Реализация
+
+- [ ] В `textkit/core.py` добавить:
+
+```python
+def reverse_words(text: str) -> str:
+    """Return the words of text in reverse order, joined by single spaces.
+
+    Example:
+        >>> reverse_words("a b c")
+        'c b a'
+    """
+    return " ".join(text.split()[::-1])
+```
+
+- [ ] Экспортировать из `textkit/__init__.py` (добавить в импорт и `__all__`).
+- [ ] Прогнать тесты — зелёные.
+
+### Task 3: Changelog
+
+- [ ] Обновить `CHANGELOG.md` по правилам репозитория (скилл changelog).
+- [ ] Финальный прогон `python3 -m unittest discover -s tests -v`.
