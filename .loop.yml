@@ -1,3 +1,5 @@
 specs_dir: docs/superpowers/specs
 test: python3 -m unittest discover -s tests -v
 timeout_minutes: 30
+review:
+  enabled: false
