@@ -10,3 +10,4 @@
 - 2026-08-01: render_page — HTML-страница веб-плейграунда
 - 2026-08-01: serve — запуск веб-плейграунда (python3 -m textkit.web)
 - 2026-08-01: render_page (Clear) — кнопка Clear очищает поле ввода и результат
+- 2026-08-01: render_page (placeholder) — подсказка «Type your text…» в поле ввода
