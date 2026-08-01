@@ -33,4 +33,4 @@ truth; its Locked decisions are binding).
 
 ## Task 3: changelog
 
-- [ ] Update `CHANGELOG.md` per repository conventions (changelog skill).
+- [x] Update `CHANGELOG.md` per repository conventions (changelog skill).
