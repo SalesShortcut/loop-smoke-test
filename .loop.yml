@@ -1,3 +1,8 @@
 specs_dir: docs/superpowers/specs
 test: python3 -m unittest discover -s tests -v
 timeout_minutes: 30
+run: python3 -m textkit.web
+e2e:
+  env:
+    TEXTKIT_PORT: "3000"
+    E2E_BASE_URL: http://localhost:3000

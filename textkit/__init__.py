@@ -1,3 +1,17 @@
-from .core import word_count
+from .core import (
+    initials,
+    reverse_words,
+    shout,
+    slugify,
+    truncate,
+    word_count,
+)
 
-__all__ = ["word_count"]
+__all__ = [
+    "initials",
+    "reverse_words",
+    "shout",
+    "slugify",
+    "truncate",
+    "word_count",
+]
