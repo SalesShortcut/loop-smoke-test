@@ -22,7 +22,7 @@ async function applyOp(page, op, text) {
 }
 
 test.describe("main user scenario", () => {
-  test("page shows the four playground elements", async ({ page }) => {
+  test("page shows the playground elements", async ({ page }) => {
     await page.goto("/");
     await expect(page).toHaveTitle("textkit playground");
     await expect(page.locator("textarea#text")).toBeVisible();
