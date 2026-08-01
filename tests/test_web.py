@@ -239,6 +239,13 @@ class TestRenderPage(unittest.TestCase):
             with self.subTest(fragment=fragment):
                 self.assertIn(fragment, self.page)
 
+    def test_textarea_has_placeholder_hint(self):
+        self.assertIn('placeholder="Type your text…"', self.page)
+        textarea = self.page[self.page.index('<textarea id="text"'):]
+        self.assertIn(
+            'placeholder="Type your text…"', textarea[: textarea.index(">") + 1]
+        )
+
     def test_clear_button_is_labelled_and_wired(self):
         # Clearing behavior itself is exercised end-to-end in
         # e2e/tests/playground.spec.js; here we only pin the markup contract.

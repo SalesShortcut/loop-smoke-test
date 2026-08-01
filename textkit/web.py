@@ -93,7 +93,7 @@ def render_page() -> str:
 </head>
 <body>
   <h1>textkit playground</h1>
-  <p><textarea id="text" rows="4" cols="60"></textarea></p>
+  <p><textarea id="text" rows="4" cols="60" placeholder="Type your text…"></textarea></p>
   <p>
     <select id="op">
 {options}
