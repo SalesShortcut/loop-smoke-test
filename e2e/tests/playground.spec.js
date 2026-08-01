@@ -1,5 +1,6 @@
 // E2E scenarios for the textkit web playground.
-// Spec: docs/superpowers/specs/2026-08-01-web-playground-design.md
+// Specs: docs/superpowers/specs/2026-08-01-web-playground-design.md
+//        docs/superpowers/specs/2026-08-01-clear-button-design.md
 const { test, expect } = require("@playwright/test");
 
 const SAMPLE = "Ada Lovelace was a mathematician";
@@ -21,12 +22,13 @@ async function applyOp(page, op, text) {
 }
 
 test.describe("main user scenario", () => {
-  test("page shows the four playground elements", async ({ page }) => {
+  test("page shows the playground elements", async ({ page }) => {
     await page.goto("/");
     await expect(page).toHaveTitle("textkit playground");
     await expect(page.locator("textarea#text")).toBeVisible();
     await expect(page.locator("select#op")).toBeVisible();
     await expect(page.locator("button#apply")).toBeVisible();
+    await expect(page.locator("button#clear")).toBeVisible();
     await expect(page.locator("output#result")).toBeAttached();
     await expect(page.locator("#op option")).toHaveText(
       Object.keys(OPERATIONS)
@@ -39,6 +41,18 @@ test.describe("main user scenario", () => {
     await page.goto("/");
     await applyOp(page, "slugify", "Ada Lovelace");
     await expect(page.locator("#result")).toHaveText("ada-lovelace");
+  });
+
+  test("clear empties #text and #result but keeps the selected op", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    await applyOp(page, "slugify", "Ada Lovelace");
+    await expect(page.locator("#result")).toHaveText("ada-lovelace");
+    await page.click("#clear");
+    await expect(page.locator("#text")).toHaveValue("");
+    await expect(page.locator("#result")).toHaveText("");
+    await expect(page.locator("#op")).toHaveValue("slugify");
   });
 });
 
