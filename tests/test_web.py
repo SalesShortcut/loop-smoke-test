@@ -1,7 +1,14 @@
+import json
 import unittest
 
 from textkit import core
-from textkit.web import OPERATIONS, TRUNCATE_WIDTH, transform
+from textkit.web import (
+    OPERATIONS,
+    TRUNCATE_WIDTH,
+    handle_transform,
+    render_page,
+    transform,
+)
 
 SAMPLE = "Ada Lovelace was a mathematician"
 
@@ -45,6 +52,81 @@ class TestTransform(unittest.TestCase):
     def test_empty_op_raises(self):
         with self.assertRaises(ValueError):
             transform("", SAMPLE)
+
+
+class TestHandleTransform(unittest.TestCase):
+    def _body(self, **payload) -> bytes:
+        return json.dumps(payload).encode("utf-8")
+
+    def test_ok_response(self):
+        status, payload = handle_transform(
+            self._body(op="slugify", text="Ada Lovelace")
+        )
+        self.assertEqual((status, payload), (200, {"result": "ada-lovelace"}))
+
+    def test_every_op_returns_200(self):
+        for op in OPERATIONS:
+            with self.subTest(op=op):
+                status, payload = handle_transform(self._body(op=op, text=SAMPLE))
+                self.assertEqual(status, 200)
+                self.assertEqual(payload["result"], transform(op, SAMPLE))
+
+    def test_missing_text_defaults_to_empty(self):
+        self.assertEqual(handle_transform(self._body(op="shout")), (200, {"result": ""}))
+
+    def test_unknown_op_is_400_with_error(self):
+        status, payload = handle_transform(self._body(op="nope", text=SAMPLE))
+        self.assertEqual(status, 400)
+        self.assertIn("nope", payload["error"])
+        self.assertNotIn("result", payload)
+
+    def test_malformed_json_is_400(self):
+        status, payload = handle_transform(b"{not json")
+        self.assertEqual(status, 400)
+        self.assertIn("error", payload)
+
+    def test_empty_body_is_400(self):
+        status, payload = handle_transform(b"")
+        self.assertEqual(status, 400)
+        self.assertIn("error", payload)
+
+    def test_non_object_body_is_400(self):
+        status, payload = handle_transform(b"[1, 2, 3]")
+        self.assertEqual(status, 400)
+        self.assertIn("error", payload)
+
+    def test_non_string_fields_are_400(self):
+        for payload_bytes in (b'{"op": 1, "text": "x"}', b'{"op": "shout", "text": 1}'):
+            with self.subTest(body=payload_bytes):
+                status, payload = handle_transform(payload_bytes)
+                self.assertEqual(status, 400)
+                self.assertIn("error", payload)
+
+
+class TestRenderPage(unittest.TestCase):
+    def setUp(self):
+        self.page = render_page()
+
+    def test_title(self):
+        self.assertIn("<title>textkit playground</title>", self.page)
+
+    def test_required_elements(self):
+        for fragment in (
+            '<textarea id="text"',
+            '<select id="op"',
+            '<button id="apply"',
+            '<output id="result"',
+        ):
+            with self.subTest(fragment=fragment):
+                self.assertIn(fragment, self.page)
+
+    def test_one_option_per_operation(self):
+        for op in OPERATIONS:
+            with self.subTest(op=op):
+                self.assertIn(f'<option value="{op}">', self.page)
+
+    def test_posts_to_the_api(self):
+        self.assertIn("/api/transform", self.page)
 
 
 if __name__ == "__main__":

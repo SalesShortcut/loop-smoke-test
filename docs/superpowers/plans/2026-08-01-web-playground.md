@@ -16,18 +16,20 @@ truth; its Locked decisions are binding).
 
 ## Task 2: HTTP server and page
 
-- [ ] In `textkit/web.py` add a `BaseHTTPRequestHandler`-based server:
+- [x] In `textkit/web.py` add a `BaseHTTPRequestHandler`-based server:
   `GET /` serves the playground HTML (elements and ids exactly per spec,
   inline JS calling `POST /api/transform` via fetch and writing `result`
   or the error message into `#result`); `POST /api/transform` parses JSON,
   calls `transform`, returns `{"result": ...}` or HTTP 400
   `{"error": ...}`.
-- [ ] `python3 -m textkit.web` starts the server (add the
+- [x] `python3 -m textkit.web` starts the server (add the
   `if __name__ == "__main__":` entry point reading `TEXTKIT_PORT`,
   default 3000, bind 0.0.0.0). Log one line to stdout when ready.
-- [ ] Unit tests: `transform`-level tests stay green; add a handler test
+- [x] Unit tests: `transform`-level tests stay green; add a handler test
   for the 400 path if it can be done without sockets, otherwise skip.
-- [ ] Run `python3 -m unittest discover -s tests -v` — green.
+  (Request handling was factored into the pure `handle_transform(body)`,
+  so the 400 paths and the page markup are covered without sockets.)
+- [x] Run `python3 -m unittest discover -s tests -v` — green.
 
 ## Task 3: changelog
 
