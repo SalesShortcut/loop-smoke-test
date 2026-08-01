@@ -99,6 +99,7 @@ def render_page() -> str:
 {options}
     </select>
     <button id="apply" type="button">Apply</button>
+    <button id="clear" type="button">Clear</button>
   </p>
   <p><output id="result"></output></p>
   <script>
@@ -118,6 +119,10 @@ def render_page() -> str:
       }} catch (err) {{
         out.textContent = String(err);
       }}
+    }});
+    document.getElementById("clear").addEventListener("click", () => {{
+      document.getElementById("text").value = "";
+      document.getElementById("result").textContent = "";
     }});
   </script>
 </body>
