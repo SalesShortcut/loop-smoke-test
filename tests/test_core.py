@@ -28,6 +28,13 @@ class TestSlugify(unittest.TestCase):
     def test_empty(self):
         self.assertEqual(slugify(""), "")
 
+    def test_diacritics_reduce_to_ascii(self):
+        self.assertEqual(slugify("Café au lait"), "cafe-au-lait")
+
+    def test_non_latin_scripts_are_dropped(self):
+        self.assertEqual(slugify("Привет"), "")
+        self.assertEqual(slugify("Привет ada"), "ada")
+
 
 class TestShout(unittest.TestCase):
     def test_simple(self):

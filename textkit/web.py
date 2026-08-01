@@ -7,6 +7,7 @@ Run it with ``python3 -m textkit.web``; the port comes from the
 import html
 import json
 import os
+import sys
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 from . import core
@@ -22,6 +23,7 @@ OPERATIONS = {
 }
 
 DEFAULT_PORT = 3000
+MAX_BODY_BYTES = 64 * 1024
 
 
 def transform(op: str, text: str) -> str:
@@ -45,7 +47,8 @@ def handle_transform(body: bytes) -> tuple[int, dict]:
     """Turn a POST /api/transform body into an HTTP status and JSON payload.
 
     A well-formed request yields ``(200, {"result": ...})``; malformed JSON,
-    a non-string field or an unknown op yields ``(400, {"error": ...})``.
+    a missing or non-string field, or an unknown op yields
+    ``(400, {"error": ...})``.
 
     Example:
         >>> handle_transform(b'{"op": "shout", "text": "hi"}')
@@ -59,7 +62,7 @@ def handle_transform(body: bytes) -> tuple[int, dict]:
         return 400, {"error": "body must be a JSON object"}
 
     op = payload.get("op")
-    text = payload.get("text", "")
+    text = payload.get("text")
     if not isinstance(op, str):
         return 400, {"error": '"op" must be a string'}
     if not isinstance(text, str):
@@ -125,24 +128,32 @@ def render_page() -> str:
 class PlaygroundHandler(BaseHTTPRequestHandler):
     """Serve the playground page and the transform API."""
 
-    server_version = "textkit-playground"
+    server_version = "textkit-playground/0.1"
 
     def do_GET(self) -> None:  # noqa: N802 - name fixed by BaseHTTPRequestHandler
         if self.path.split("?", 1)[0] != "/":
-            self._send(404, "application/json", json.dumps({"error": "not found"}))
+            self._send_json(404, {"error": "not found"})
             return
         self._send(200, "text/html; charset=utf-8", render_page())
 
     def do_POST(self) -> None:  # noqa: N802 - name fixed by BaseHTTPRequestHandler
         if self.path.split("?", 1)[0] != "/api/transform":
-            self._send(404, "application/json", json.dumps({"error": "not found"}))
+            self._send_json(404, {"error": "not found"})
             return
         try:
             length = int(self.headers.get("Content-Length") or 0)
         except ValueError:
             length = 0
+        if length > MAX_BODY_BYTES:
+            # The unread body would desync a keep-alive connection.
+            self.close_connection = True
+            self._send_json(413, {"error": "body too large"})
+            return
         body = self.rfile.read(length) if length > 0 else b""
         status, payload = handle_transform(body)
+        self._send_json(status, payload)
+
+    def _send_json(self, status: int, payload: dict) -> None:
         self._send(status, "application/json; charset=utf-8", json.dumps(payload))
 
     def _send(self, status: int, content_type: str, body: str) -> None:
@@ -171,5 +182,22 @@ def serve(port: int = DEFAULT_PORT, host: str = "0.0.0.0") -> None:
         server.server_close()
 
 
+def port_from_env(value: str | None) -> int:
+    """Parse a TEXTKIT_PORT value, exiting with a message when invalid.
+
+    Example:
+        >>> port_from_env("8080")
+        8080
+        >>> port_from_env(None)
+        3000
+    """
+    if not value:
+        return DEFAULT_PORT
+    try:
+        return int(value)
+    except ValueError:
+        sys.exit(f"TEXTKIT_PORT must be an integer, got {value!r}")
+
+
 if __name__ == "__main__":
-    serve(int(os.environ.get("TEXTKIT_PORT") or DEFAULT_PORT))
+    serve(port_from_env(os.environ.get("TEXTKIT_PORT")))

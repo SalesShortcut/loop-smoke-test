@@ -1,4 +1,5 @@
 import re
+import unicodedata
 
 
 def word_count(text: str) -> int:
@@ -7,16 +8,22 @@ def word_count(text: str) -> int:
 
 
 def slugify(text: str) -> str:
-    """Return a URL-safe slug built from text.
+    """Return a URL-safe ASCII slug built from text.
 
-    Letters and digits are kept and lowercased, every other run of
-    characters becomes a single hyphen.
+    Accented Latin letters are reduced to their base letter (NFKD), then
+    ASCII letters and digits are kept and lowercased; every other run of
+    characters — including non-Latin scripts — becomes a single hyphen.
 
     Example:
         >>> slugify("Ada Lovelace")
         'ada-lovelace'
+        >>> slugify("Café au lait")
+        'cafe-au-lait'
     """
-    return re.sub(r"[^a-z0-9]+", "-", text.lower()).strip("-")
+    ascii_text = (
+        unicodedata.normalize("NFKD", text).encode("ascii", "ignore").decode("ascii")
+    )
+    return re.sub(r"[^a-z0-9]+", "-", ascii_text.lower()).strip("-")
 
 
 def shout(text: str) -> str:

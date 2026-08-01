@@ -34,3 +34,7 @@ truth; its Locked decisions are binding).
 ## Task 3: changelog
 
 - [x] Update `CHANGELOG.md` per repository conventions (changelog skill).
+
+Note for future plans: the changelog skill (rule 4) requires each entry to
+land in the same commit as its feature. Do not split changelog updates into
+a separate task like this one did — fold them into each feature task.

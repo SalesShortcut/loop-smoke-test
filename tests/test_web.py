@@ -1,11 +1,15 @@
+import io
 import json
 import unittest
 
 from textkit import core
 from textkit.web import (
+    MAX_BODY_BYTES,
     OPERATIONS,
     TRUNCATE_WIDTH,
+    PlaygroundHandler,
     handle_transform,
+    port_from_env,
     render_page,
     transform,
 )
@@ -71,8 +75,15 @@ class TestHandleTransform(unittest.TestCase):
                 self.assertEqual(status, 200)
                 self.assertEqual(payload["result"], transform(op, SAMPLE))
 
-    def test_missing_text_defaults_to_empty(self):
-        self.assertEqual(handle_transform(self._body(op="shout")), (200, {"result": ""}))
+    def test_missing_text_is_400(self):
+        status, payload = handle_transform(self._body(op="shout"))
+        self.assertEqual(status, 400)
+        self.assertIn("error", payload)
+
+    def test_missing_op_is_400(self):
+        status, payload = handle_transform(self._body(text="hi"))
+        self.assertEqual(status, 400)
+        self.assertIn("error", payload)
 
     def test_unknown_op_is_400_with_error(self):
         status, payload = handle_transform(self._body(op="nope", text=SAMPLE))
@@ -101,6 +112,113 @@ class TestHandleTransform(unittest.TestCase):
                 status, payload = handle_transform(payload_bytes)
                 self.assertEqual(status, 400)
                 self.assertIn("error", payload)
+
+
+def run_handler(method, path, headers=None, body=b""):
+    """Drive PlaygroundHandler without a socket.
+
+    Returns (status, headers, body_bytes, handler).
+    """
+    handler = PlaygroundHandler.__new__(PlaygroundHandler)
+    handler.path = path
+    handler.headers = headers or {}
+    handler.rfile = io.BytesIO(body)
+    handler.wfile = io.BytesIO()
+    handler.request_version = "HTTP/1.1"
+    handler.close_connection = False
+    sent = {"status": None, "headers": {}}
+    handler.send_response = lambda status: sent.__setitem__("status", status)
+    handler.send_header = lambda name, value: sent["headers"].__setitem__(name, value)
+    handler.end_headers = lambda: None
+    getattr(handler, f"do_{method}")()
+    return sent["status"], sent["headers"], handler.wfile.getvalue(), handler
+
+
+class TestPlaygroundHandler(unittest.TestCase):
+    def _post(self, body_bytes, path="/api/transform", headers=None):
+        if headers is None:
+            headers = {"Content-Length": str(len(body_bytes))}
+        return run_handler("POST", path, headers, body_bytes)
+
+    def test_get_root_serves_page(self):
+        status, headers, body, _ = run_handler("GET", "/")
+        self.assertEqual(status, 200)
+        self.assertEqual(headers["Content-Type"], "text/html; charset=utf-8")
+        self.assertIn(b"<title>textkit playground</title>", body)
+
+    def test_get_root_with_query_string(self):
+        status, _, _, _ = run_handler("GET", "/?utm_source=x")
+        self.assertEqual(status, 200)
+
+    def test_get_unknown_path_is_json_404(self):
+        status, headers, body, _ = run_handler("GET", "/nope")
+        self.assertEqual(status, 404)
+        self.assertEqual(headers["Content-Type"], "application/json; charset=utf-8")
+        self.assertEqual(json.loads(body), {"error": "not found"})
+
+    def test_post_transform_ok(self):
+        payload = json.dumps({"op": "slugify", "text": "Ada Lovelace"}).encode()
+        status, headers, body, _ = self._post(payload)
+        self.assertEqual(status, 200)
+        self.assertEqual(headers["Content-Type"], "application/json; charset=utf-8")
+        self.assertEqual(json.loads(body), {"result": "ada-lovelace"})
+
+    def test_post_transform_with_query_string_routes(self):
+        payload = json.dumps({"op": "shout", "text": "hi"}).encode()
+        status, _, body, _ = self._post(payload, path="/api/transform?x=1")
+        self.assertEqual(status, 200)
+        self.assertEqual(json.loads(body), {"result": "HI"})
+
+    def test_post_unknown_path_is_json_404(self):
+        status, headers, body, _ = self._post(b"{}", path="/other")
+        self.assertEqual(status, 404)
+        self.assertEqual(headers["Content-Type"], "application/json; charset=utf-8")
+        self.assertEqual(json.loads(body), {"error": "not found"})
+
+    def test_post_without_content_length_is_400(self):
+        status, _, body, _ = self._post(b"", headers={})
+        self.assertEqual(status, 400)
+        self.assertIn("error", json.loads(body))
+
+    def test_post_non_numeric_content_length_is_400(self):
+        status, _, body, _ = self._post(b"", headers={"Content-Length": "abc"})
+        self.assertEqual(status, 400)
+        self.assertIn("error", json.loads(body))
+
+    def test_post_negative_content_length_is_400(self):
+        status, _, body, _ = self._post(b"", headers={"Content-Length": "-5"})
+        self.assertEqual(status, 400)
+        self.assertIn("error", json.loads(body))
+
+    def test_post_oversized_body_is_413(self):
+        headers = {"Content-Length": str(MAX_BODY_BYTES + 1)}
+        status, _, body, handler = self._post(b"", headers=headers)
+        self.assertEqual(status, 413)
+        self.assertIn("error", json.loads(body))
+        self.assertTrue(handler.close_connection)
+
+    def test_body_at_limit_is_not_rejected(self):
+        text = "x" * (MAX_BODY_BYTES - 100)
+        payload = json.dumps({"op": "shout", "text": text}).encode()
+        self.assertLessEqual(len(payload), MAX_BODY_BYTES)
+        status, _, _, _ = self._post(payload)
+        self.assertEqual(status, 200)
+
+
+class TestPortFromEnv(unittest.TestCase):
+    def test_numeric_value(self):
+        self.assertEqual(port_from_env("8080"), 8080)
+
+    def test_unset_defaults(self):
+        self.assertEqual(port_from_env(None), 3000)
+
+    def test_empty_defaults(self):
+        self.assertEqual(port_from_env(""), 3000)
+
+    def test_invalid_value_exits_with_message(self):
+        with self.assertRaises(SystemExit) as ctx:
+            port_from_env("abc")
+        self.assertIn("TEXTKIT_PORT", str(ctx.exception.code))
 
 
 class TestRenderPage(unittest.TestCase):
