@@ -5,14 +5,14 @@ truth; its Locked decisions are binding).
 
 ## Task 1: transform dispatch
 
-- [ ] Add `textkit/web.py` with a pure function
+- [x] Add `textkit/web.py` with a pure function
   `transform(op: str, text: str) -> str` mapping op names to
   `textkit.core` functions per the spec (`truncate` with width 20).
   Unknown op raises `ValueError`. Docstring with an `Example:` block per
   repository conventions.
-- [ ] Unit tests in `tests/test_web.py` (unittest): every supported op
+- [x] Unit tests in `tests/test_web.py` (unittest): every supported op
   matches its `textkit.core` counterpart; unknown op raises `ValueError`.
-- [ ] Run `python3 -m unittest discover -s tests -v` — green.
+- [x] Run `python3 -m unittest discover -s tests -v` — green.
 
 ## Task 2: HTTP server and page
 
