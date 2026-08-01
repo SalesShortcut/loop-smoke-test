@@ -239,12 +239,12 @@ class TestRenderPage(unittest.TestCase):
             with self.subTest(fragment=fragment):
                 self.assertIn(fragment, self.page)
 
-    def test_clear_button_is_labelled_and_clears_both_fields(self):
+    def test_clear_button_is_labelled_and_wired(self):
+        # Clearing behavior itself is exercised end-to-end in
+        # e2e/tests/playground.spec.js; here we only pin the markup contract.
         self.assertIn('<button id="clear" type="button">Clear</button>', self.page)
-        self.assertIn('document.getElementById("text").value = "";', self.page)
-        self.assertIn(
-            'document.getElementById("result").textContent = "";', self.page
-        )
+        script = self.page[self.page.index("<script>"):]
+        self.assertIn('getElementById("clear")', script)
 
     def test_one_option_per_operation(self):
         for op in OPERATIONS:

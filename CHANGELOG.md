@@ -9,4 +9,4 @@
 - 2026-08-01: handle_transform — обработка тела POST /api/transform (200 или 400)
 - 2026-08-01: render_page — HTML-страница веб-плейграунда
 - 2026-08-01: serve — запуск веб-плейграунда (python3 -m textkit.web)
-- 2026-08-01: render_page — кнопка Clear очищает поле ввода и результат
+- 2026-08-01: render_page (Clear) — кнопка Clear очищает поле ввода и результат
