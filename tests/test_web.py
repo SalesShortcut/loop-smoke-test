@@ -6,6 +6,7 @@ from textkit import core
 from textkit.web import (
     MAX_BODY_BYTES,
     OPERATIONS,
+    RESULT_PLACEHOLDER,
     TRUNCATE_WIDTH,
     PlaygroundHandler,
     handle_transform,
@@ -256,6 +257,17 @@ class TestRenderPage(unittest.TestCase):
         # The clear handler must reset the counter to zero.
         clear_handler = script[script.index('getElementById("clear")'):]
         self.assertIn("showCount(0)", clear_handler)
+
+    def test_result_starts_with_the_placeholder(self):
+        self.assertEqual(RESULT_PLACEHOLDER, "Nothing yet")
+        self.assertIn('<output id="result">Nothing yet</output>', self.page)
+
+    def test_clear_restores_the_result_placeholder(self):
+        # Clearing behavior itself is exercised end-to-end; here we pin the
+        # markup contract: the handler writes the placeholder, not "".
+        script = self.page[self.page.index("<script>"):]
+        clear_handler = script[script.index('getElementById("clear")'):]
+        self.assertIn('getElementById("result").textContent = "Nothing yet"', clear_handler)
 
     def test_clear_button_is_labelled_and_wired(self):
         # Clearing behavior itself is exercised end-to-end in

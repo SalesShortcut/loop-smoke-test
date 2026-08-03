@@ -18,7 +18,7 @@ async function applyOp(page, op, text) {
   await page.fill("#text", text);
   await page.selectOption("#op", op);
   await page.click("#apply");
-  await expect(page.locator("#result")).not.toHaveText("");
+  await expect(page.locator("#result")).not.toHaveText("Nothing yet");
 }
 
 test.describe("main user scenario", () => {
@@ -30,6 +30,7 @@ test.describe("main user scenario", () => {
     await expect(page.locator("button#apply")).toBeVisible();
     await expect(page.locator("button#clear")).toBeVisible();
     await expect(page.locator("output#result")).toBeAttached();
+    await expect(page.locator("#result")).toHaveText("Nothing yet");
     await expect(page.locator("#op option")).toHaveText(
       Object.keys(OPERATIONS)
     );
@@ -43,7 +44,7 @@ test.describe("main user scenario", () => {
     await expect(page.locator("#result")).toHaveText("ada-lovelace");
   });
 
-  test("clear empties #text and #result but keeps the selected op", async ({
+  test("clear empties #text, restores the placeholder, keeps the op", async ({
     page,
   }) => {
     await page.goto("/");
@@ -51,7 +52,7 @@ test.describe("main user scenario", () => {
     await expect(page.locator("#result")).toHaveText("ada-lovelace");
     await page.click("#clear");
     await expect(page.locator("#text")).toHaveValue("");
-    await expect(page.locator("#result")).toHaveText("");
+    await expect(page.locator("#result")).toHaveText("Nothing yet");
     await expect(page.locator("#op")).toHaveValue("slugify");
   });
 });

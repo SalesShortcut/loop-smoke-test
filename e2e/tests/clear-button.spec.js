@@ -14,7 +14,7 @@ test.describe("Clear button — main user scenario", () => {
 
     await page.click("#clear");
     await expect(page.locator("#text")).toHaveValue("");
-    await expect(page.locator("#result")).toHaveText("");
+    await expect(page.locator("#result")).toHaveText("Nothing yet");
     await expect(page.locator("#op")).toHaveValue("slugify");
   });
 });
@@ -35,7 +35,7 @@ test.describe("Clear button — critical paths", () => {
     await page.goto("/");
     await page.click("#clear");
     await expect(page.locator("#text")).toHaveValue("");
-    await expect(page.locator("#result")).toHaveText("");
+    await expect(page.locator("#result")).toHaveText("Nothing yet");
   });
 
   test("clear is client-side only — no HTTP request is made", async ({
@@ -51,7 +51,7 @@ test.describe("Clear button — critical paths", () => {
     page.on("request", (request) => requests.push(request.url()));
     await page.click("#clear");
     await expect(page.locator("#text")).toHaveValue("");
-    await expect(page.locator("#result")).toHaveText("");
+    await expect(page.locator("#result")).toHaveText("Nothing yet");
     expect(requests).toEqual([]);
   });
 
