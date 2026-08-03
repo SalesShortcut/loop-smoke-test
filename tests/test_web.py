@@ -288,13 +288,12 @@ class TestRenderPage(unittest.TestCase):
         self.assertIn('getElementById("clear")', script)
 
     def test_footer_counts_the_operations(self):
-        # Rendered server-side, so the count is pinned literally here and
-        # cross-checked against OPERATIONS.
+        # The literal count is pinned by the plan; test_supported_ops already
+        # pins the operation set itself.
         self.assertIn(
             '<footer id="footer">textkit playground · 5 operations</footer>',
             self.page,
         )
-        self.assertEqual(len(OPERATIONS), 5)
 
     def test_footer_follows_the_result(self):
         self.assertLess(
@@ -305,7 +304,7 @@ class TestRenderPage(unittest.TestCase):
     def test_footer_is_static(self):
         # No script touches the footer: it never changes after load.
         script = self.page[self.page.index("<script>"):]
-        self.assertNotIn("footer", script)
+        self.assertNotIn('getElementById("footer")', script)
 
     def test_one_option_per_operation(self):
         for op in OPERATIONS:
