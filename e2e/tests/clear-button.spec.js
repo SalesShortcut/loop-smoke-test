@@ -27,9 +27,9 @@ test.describe("Clear button — critical paths", () => {
     await page.goto("/");
     await expect(page.locator("button#clear")).toBeVisible();
     await expect(page.locator("button#clear")).toHaveText("Clear");
-    // Both buttons share the same paragraph as the op selector.
+    // The action buttons share the same paragraph as the op selector.
     const buttons = page.locator("p:has(#apply) button");
-    await expect(buttons).toHaveText(["Apply", "Clear"]);
+    await expect(buttons).toHaveText(["Apply", "Clear", "Title Case"]);
   });
 
   test("clear on a pristine page is a harmless no-op", async ({ page }) => {

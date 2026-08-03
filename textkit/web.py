@@ -20,6 +20,7 @@ OPERATIONS = {
     "initials": core.initials,
     "reverse_words": core.reverse_words,
     "truncate": lambda text: core.truncate(text, TRUNCATE_WIDTH),
+    "title_case": core.title_case,
 }
 
 DEFAULT_PORT = 3000
@@ -104,18 +105,19 @@ def render_page() -> str:
     </select>
     <button id="apply" type="button">Apply</button>
     <button id="clear" type="button">Clear</button>
+    <button id="title-case" type="button">Title Case</button>
   </p>
   <p><output id="result">{html.escape(RESULT_PLACEHOLDER)}</output></p>
   <footer id="footer">textkit playground · {len(OPERATIONS)} operations</footer>
   <script>
-    document.getElementById("apply").addEventListener("click", async () => {{
+    const applyOp = async (op) => {{
       const out = document.getElementById("result");
       try {{
         const response = await fetch("/api/transform", {{
           method: "POST",
           headers: {{"Content-Type": "application/json"}},
           body: JSON.stringify({{
-            op: document.getElementById("op").value,
+            op: op,
             text: document.getElementById("text").value,
           }}),
         }});
@@ -124,6 +126,12 @@ def render_page() -> str:
       }} catch (err) {{
         out.textContent = String(err);
       }}
+    }};
+    document.getElementById("apply").addEventListener("click", () => {{
+      applyOp(document.getElementById("op").value);
+    }});
+    document.getElementById("title-case").addEventListener("click", () => {{
+      applyOp("title_case");
     }});
     const showCount = (length) => {{
       document.getElementById("charcount").textContent = length + " characters";
