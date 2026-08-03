@@ -167,7 +167,7 @@ coverage for the legacy alias (spec §1).
 
 ## Task 6: changelog, verification, commit
 
-- [ ] Follow the `changelog` skill — append to the **end** of `CHANGELOG.md`,
+- [x] Follow the `changelog` skill — append to the **end** of `CHANGELOG.md`,
   one line per new public function, using the current UTC date:
 
   ```
@@ -175,8 +175,8 @@ coverage for the legacy alias (spec §1).
   - 2026-08-03: handle_transform (fn) — POST /api/transform принимает поле fn (op — устаревший синоним)
   ```
 
-- [ ] `python3 -m unittest discover -s tests -v` — green.
-- [ ] Manual check against a running server
+- [x] `python3 -m unittest discover -s tests -v` — green.
+- [x] Manual check against a running server
   (`TEXTKIT_PORT=3000 python3 -m textkit.web`, bind stays `0.0.0.0`):
   - `curl -s -i 127.0.0.1:3000/api/transforms` → 200, JSON content type, the
     six sorted names.
@@ -185,12 +185,12 @@ coverage for the legacy alias (spec §1).
   - `curl -s -o /dev/null -w '%{http_code}\n' -X POST 127.0.0.1:3000/api/transform -d '{"fn":"nope","text":"x"}'`
     → `400`.
   - `curl -s 127.0.0.1:3000/ | grep -c 'fn:'` → `1`.
-- [ ] Playwright from `e2e/` against that server:
+- [x] Playwright from `e2e/` against that server:
   `E2E_BASE_URL=http://localhost:3000 npx playwright test`. First run needs
   `npm ci` and
   `PLAYWRIGHT_BROWSERS_PATH=/home/sandbox/.cache/ms-playwright npx playwright install chromium`
   (the default `/opt/pw-browsers` is read-only and `--with-deps` needs root).
-- [ ] Confirm no `__pycache__/` or `*.pyc` is staged; single commit; **do not
+- [x] Confirm no `__pycache__/` or `*.pyc` is staged; single commit; **do not
   push**.
 
 ## Files touched

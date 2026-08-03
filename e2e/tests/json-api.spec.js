@@ -59,10 +59,13 @@ test.describe("JSON transform API — error paths", () => {
   test("a malformed body is a 400 with a string error", async ({ request }) => {
     const response = await request.post("/api/transform", {
       headers: { "Content-Type": "application/json" },
-      data: "{not json",
+      // A Buffer is sent raw; a string would be JSON-serialized by Playwright
+      // and reach the server as the valid JSON document "\"{not json\"".
+      data: Buffer.from("{not json"),
     });
     expect(response.status()).toBe(400);
-    expect(typeof (await response.json()).error).toBe("string");
+    // Spec §5 fixes this wording verbatim; pin it at the HTTP layer too.
+    expect(await response.json()).toEqual({ error: "body must be valid JSON" });
   });
 
   test("GET /api/transforms/ is a 404", async ({ request }) => {

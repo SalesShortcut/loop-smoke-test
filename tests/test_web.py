@@ -122,7 +122,11 @@ class TestHandleTransform(unittest.TestCase):
         self.assertIn("error", payload)
 
     def test_non_string_fields_are_400(self):
-        for payload_bytes in (b'{"op": 1, "text": "x"}', b'{"op": "shout", "text": 1}'):
+        for payload_bytes in (
+            b'{"op": 1, "text": "x"}',
+            b'{"op": "shout", "text": 1}',
+            b'{"fn": "shout", "text": 1}',
+        ):
             with self.subTest(body=payload_bytes):
                 status, payload = handle_transform(payload_bytes)
                 self.assertEqual(status, 400)
