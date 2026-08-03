@@ -94,6 +94,7 @@ def render_page() -> str:
 <body>
   <h1>textkit playground</h1>
   <p><textarea id="text" rows="4" cols="60"></textarea></p>
+  <div id="charcount">0 characters</div>
   <p>
     <select id="op">
 {options}
@@ -120,9 +121,16 @@ def render_page() -> str:
         out.textContent = String(err);
       }}
     }});
+    const showCount = (length) => {{
+      document.getElementById("charcount").textContent = length + " characters";
+    }};
+    document.getElementById("text").addEventListener("input", (event) => {{
+      showCount(event.target.value.length);
+    }});
     document.getElementById("clear").addEventListener("click", () => {{
       document.getElementById("text").value = "";
       document.getElementById("result").textContent = "";
+      showCount(0);
     }});
   </script>
 </body>
