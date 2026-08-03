@@ -17,8 +17,11 @@ const OPERATIONS = {
 async function applyOp(page, op, text) {
   await page.fill("#text", text);
   await page.selectOption("#op", op);
+  // Wait on the transform request itself: a text-based wait would hang if a
+  // result ever legitimately equalled the "Nothing yet" placeholder.
+  const responded = page.waitForResponse("**/api/transform");
   await page.click("#apply");
-  await expect(page.locator("#result")).not.toHaveText("Nothing yet");
+  await responded;
 }
 
 test.describe("main user scenario", () => {
