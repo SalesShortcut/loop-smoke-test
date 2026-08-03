@@ -2,6 +2,7 @@
 // Specs: docs/superpowers/specs/2026-08-01-web-playground-design.md
 //        docs/superpowers/specs/2026-08-01-clear-button-design.md
 const { test, expect } = require("@playwright/test");
+const { PLACEHOLDER } = require("./constants");
 
 const SAMPLE = "Ada Lovelace was a mathematician";
 
@@ -33,7 +34,7 @@ test.describe("main user scenario", () => {
     await expect(page.locator("button#apply")).toBeVisible();
     await expect(page.locator("button#clear")).toBeVisible();
     await expect(page.locator("output#result")).toBeAttached();
-    await expect(page.locator("#result")).toHaveText("Type something and press Apply Beza");
+    await expect(page.locator("#result")).toHaveText(PLACEHOLDER);
     await expect(page.locator("#op option")).toHaveText(
       Object.keys(OPERATIONS)
     );
@@ -55,7 +56,7 @@ test.describe("main user scenario", () => {
     await expect(page.locator("#result")).toHaveText("ada-lovelace");
     await page.click("#clear");
     await expect(page.locator("#text")).toHaveValue("");
-    await expect(page.locator("#result")).toHaveText("Type something and press Apply Beza");
+    await expect(page.locator("#result")).toHaveText(PLACEHOLDER);
     await expect(page.locator("#op")).toHaveValue("slugify");
   });
 });

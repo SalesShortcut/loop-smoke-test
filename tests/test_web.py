@@ -259,15 +259,24 @@ class TestRenderPage(unittest.TestCase):
         self.assertIn("showCount(0)", clear_handler)
 
     def test_result_starts_with_the_placeholder(self):
-        self.assertEqual(RESULT_PLACEHOLDER, "Type something and press Apply Beza")
-        self.assertIn('<output id="result">Type something and press Apply Beza</output>', self.page)
+        # The only literal pin of the placeholder text; everything else
+        # asserts against RESULT_PLACEHOLDER.
+        self.assertEqual(
+            RESULT_PLACEHOLDER, "Type something and press Apply Beza"
+        )
+        self.assertIn(
+            f'<output id="result">{RESULT_PLACEHOLDER}</output>', self.page
+        )
 
     def test_clear_restores_the_result_placeholder(self):
         # Clearing behavior itself is exercised end-to-end; here we pin the
         # markup contract: the handler writes the placeholder, not "".
         script = self.page[self.page.index("<script>"):]
         clear_handler = script[script.index('getElementById("clear")'):]
-        self.assertIn('getElementById("result").textContent = "Type something and press Apply Beza"', clear_handler)
+        self.assertIn(
+            f'getElementById("result").textContent = "{RESULT_PLACEHOLDER}"',
+            clear_handler,
+        )
 
     def test_clear_button_is_labelled_and_wired(self):
         # Clearing behavior itself is exercised end-to-end in

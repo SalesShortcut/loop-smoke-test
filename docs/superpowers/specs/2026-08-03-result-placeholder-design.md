@@ -33,3 +33,16 @@ displays `Nothing yet`.
 ## Out of scope
 
 Styling, localisation, placeholders anywhere else, error-message wording.
+
+## Revision 2026-08-03: placeholder text overridden by reviewer feedback
+
+A human reviewer of the staged result requested the placeholder text
+`Type something and press Apply Beza`. This supersedes the locked decision
+above that fixed the string as `Nothing yet`; every other decision stands
+unchanged. The string was implemented verbatim as quoted in the feedback,
+including the trailing word «Beza», which has not yet been confirmed with
+the reviewer and may be a typo. If it turns out to be unintended, the only
+places to change are the `RESULT_PLACEHOLDER` constant in `textkit/web.py`,
+its literal pin in `tests/test_web.py`
+(`test_result_starts_with_the_placeholder`) and the shared `PLACEHOLDER`
+constant in `e2e/tests/constants.js`.
