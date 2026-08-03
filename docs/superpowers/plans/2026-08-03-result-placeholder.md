@@ -15,6 +15,16 @@ Spec: `docs/superpowers/specs/2026-08-03-result-placeholder-design.md`
   skill rule 4).
 - [x] Run `python3 -m unittest discover -s tests -v` — green.
 
+## Merge gate (open)
+
+- [ ] Human reviewer confirms or corrects the placeholder wording
+  `Type something and press Apply Beza` — the trailing «Beza» was
+  implemented verbatim from the staged-result feedback and may be a typo
+  (see the spec's Revision 2026-08-03 section). If corrected, change only
+  `RESULT_PLACEHOLDER` in `textkit/web.py`, the literal pin in
+  `tests/test_web.py` (`test_result_starts_with_the_placeholder`) and
+  `PLACEHOLDER` in `e2e/tests/constants.js`.
+
 ## Deviation from plan (recorded during execution)
 
 The e2e specs `e2e/tests/playground.spec.js` and

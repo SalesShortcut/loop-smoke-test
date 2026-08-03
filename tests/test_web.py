@@ -274,7 +274,8 @@ class TestRenderPage(unittest.TestCase):
         script = self.page[self.page.index("<script>"):]
         clear_handler = script[script.index('getElementById("clear")'):]
         self.assertIn(
-            f'getElementById("result").textContent = "{RESULT_PLACEHOLDER}"',
+            "getElementById(\"result\").textContent = "
+            f"{json.dumps(RESULT_PLACEHOLDER)}",
             clear_handler,
         )
 
