@@ -11,3 +11,5 @@
 - 2026-08-01: serve — запуск веб-плейграунда (python3 -m textkit.web)
 - 2026-08-01: render_page (Clear) — кнопка Clear очищает поле ввода и результат
 - 2026-08-03: render_page (charcount) — живой счётчик символов под полем ввода
+- 2026-08-03: render_page (result placeholder) — область результата показывает «Nothing yet» до первого преобразования и после Clear
+- 2026-08-03: render_page (result placeholder) — текст плейсхолдера изменён на «Type something and press Apply Beza» по фидбеку ревьюера

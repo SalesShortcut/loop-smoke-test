@@ -1,6 +1,7 @@
 // E2E scenarios for the playground Clear button.
 // Spec: docs/superpowers/specs/2026-08-01-clear-button-design.md
 const { test, expect } = require("@playwright/test");
+const { PLACEHOLDER } = require("./constants");
 
 test.describe("Clear button — main user scenario", () => {
   test("apply slugify then clear empties both fields and keeps the op", async ({
@@ -14,7 +15,7 @@ test.describe("Clear button — main user scenario", () => {
 
     await page.click("#clear");
     await expect(page.locator("#text")).toHaveValue("");
-    await expect(page.locator("#result")).toHaveText("");
+    await expect(page.locator("#result")).toHaveText(PLACEHOLDER);
     await expect(page.locator("#op")).toHaveValue("slugify");
   });
 });
@@ -35,7 +36,7 @@ test.describe("Clear button — critical paths", () => {
     await page.goto("/");
     await page.click("#clear");
     await expect(page.locator("#text")).toHaveValue("");
-    await expect(page.locator("#result")).toHaveText("");
+    await expect(page.locator("#result")).toHaveText(PLACEHOLDER);
   });
 
   test("clear is client-side only — no HTTP request is made", async ({
@@ -51,7 +52,7 @@ test.describe("Clear button — critical paths", () => {
     page.on("request", (request) => requests.push(request.url()));
     await page.click("#clear");
     await expect(page.locator("#text")).toHaveValue("");
-    await expect(page.locator("#result")).toHaveText("");
+    await expect(page.locator("#result")).toHaveText(PLACEHOLDER);
     expect(requests).toEqual([]);
   });
 

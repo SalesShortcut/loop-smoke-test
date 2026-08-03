@@ -25,6 +25,9 @@ OPERATIONS = {
 DEFAULT_PORT = 3000
 MAX_BODY_BYTES = 64 * 1024
 
+# Shown in the result area before the first transform and after Clear.
+RESULT_PLACEHOLDER = "Type something and press Apply Beza"
+
 
 def transform(op: str, text: str) -> str:
     """Apply the named textkit operation to text.
@@ -102,7 +105,7 @@ def render_page() -> str:
     <button id="apply" type="button">Apply</button>
     <button id="clear" type="button">Clear</button>
   </p>
-  <p><output id="result"></output></p>
+  <p><output id="result">{html.escape(RESULT_PLACEHOLDER)}</output></p>
   <script>
     document.getElementById("apply").addEventListener("click", async () => {{
       const out = document.getElementById("result");
@@ -129,7 +132,7 @@ def render_page() -> str:
     }});
     document.getElementById("clear").addEventListener("click", () => {{
       document.getElementById("text").value = "";
-      document.getElementById("result").textContent = "";
+      document.getElementById("result").textContent = {json.dumps(RESULT_PLACEHOLDER)};
       showCount(0);
     }});
   </script>
