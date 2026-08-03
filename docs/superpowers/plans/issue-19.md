@@ -94,7 +94,7 @@ File: `tests/test_web.py`. Add `list_transforms` to the import block. **Do not
 edit or delete the existing `op`-based tests** — they are the regression
 coverage for the legacy alias (spec §1).
 
-- [ ] New `class TestListTransforms(unittest.TestCase)`:
+- [x] New `class TestListTransforms(unittest.TestCase)`:
   - `test_payload_shape` — `list_transforms()` equals
     `{"transforms": ["initials", "reverse_words", "shout", "slugify", "title_case", "truncate"]}`
     (the one literal pin of the contract).
@@ -105,7 +105,7 @@ coverage for the legacy alias (spec §1).
     `handle_transform(json.dumps({"fn": name, "text": SAMPLE}).encode())`
     returns status 200 and `payload["result"] == transform(name, SAMPLE)`.
   - `test_word_count_is_not_exposed` — `"word_count"` not in the list.
-- [ ] In `TestHandleTransform`, new methods (keep `_body(**payload)` as the
+- [x] In `TestHandleTransform`, new methods (keep `_body(**payload)` as the
   helper):
   - `test_fn_field_is_accepted` — `{"fn": "slugify", "text": "Ada Lovelace"}`
     → `(200, {"result": "ada-lovelace"})`.
@@ -122,7 +122,7 @@ coverage for the legacy alias (spec §1).
     `b'{"fn": ["shout"], "text": "x"}'`.
   - `test_missing_text_with_fn_is_400` — `{"fn": "shout"}` → 400.
   - (malformed JSON / empty body / non-object body are already covered.)
-- [ ] In `TestPlaygroundHandler`, new methods using `run_handler`:
+- [x] In `TestPlaygroundHandler`, new methods using `run_handler`:
   - `test_get_transforms_returns_json_list` — `run_handler("GET", "/api/transforms")`
     → status 200, `headers["Content-Type"] == "application/json; charset=utf-8"`,
     `json.loads(body) == list_transforms()`.
@@ -137,10 +137,10 @@ coverage for the legacy alias (spec §1).
   - `test_post_transform_unknown_fn_is_400` — POST `{"fn": "nope", "text": "x"}`
     → 400 with an `error` string.
   - `test_get_root_still_serves_the_page` is already there — leave it.
-- [ ] In `TestRenderPage`, add `test_page_posts_the_fn_field`: the script
+- [x] In `TestRenderPage`, add `test_page_posts_the_fn_field`: the script
   contains `fn:` in the `JSON.stringify` block and no longer contains `op:`
   as a body key (assert on the `<script>` slice, as the sibling tests do).
-- [ ] Run `python3 -m unittest discover -s tests -v` — all 75 original tests
+- [x] Run `python3 -m unittest discover -s tests -v` — all 75 original tests
   still pass, plus roughly 22 new ones.
 
 ## Task 5: e2e + README

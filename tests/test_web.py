@@ -10,6 +10,7 @@ from textkit.web import (
     TRUNCATE_WIDTH,
     PlaygroundHandler,
     handle_transform,
+    list_transforms,
     port_from_env,
     render_page,
     transform,
@@ -127,6 +128,98 @@ class TestHandleTransform(unittest.TestCase):
                 self.assertEqual(status, 400)
                 self.assertIn("error", payload)
 
+    def test_fn_field_is_accepted(self):
+        status, payload = handle_transform(
+            self._body(fn="slugify", text="Ada Lovelace")
+        )
+        self.assertEqual((status, payload), (200, {"result": "ada-lovelace"}))
+
+    def test_op_field_still_accepted(self):
+        # The legacy alias: kept working on purpose (spec §1).
+        status, payload = handle_transform(
+            self._body(op="slugify", text="Ada Lovelace")
+        )
+        self.assertEqual((status, payload), (200, {"result": "ada-lovelace"}))
+
+    def test_fn_wins_over_op(self):
+        status, payload = handle_transform(
+            self._body(fn="shout", op="slugify", text="hi")
+        )
+        self.assertEqual((status, payload), (200, {"result": "HI"}))
+
+    def test_invalid_fn_is_not_rescued_by_op(self):
+        # A caller who sends fn is never silently served by a stale op.
+        status, payload = handle_transform(b'{"fn": 1, "op": "shout", "text": "x"}')
+        self.assertEqual(status, 400)
+        self.assertIn("error", payload)
+
+    def test_missing_fn_is_400(self):
+        status, payload = handle_transform(self._body(text="hi"))
+        self.assertEqual(status, 400)
+        self.assertIn("error", payload)
+
+    def test_unknown_fn_is_400_with_error(self):
+        status, payload = handle_transform(self._body(fn="nope", text=SAMPLE))
+        self.assertEqual(status, 400)
+        self.assertIn("nope", payload["error"])
+        self.assertNotIn("result", payload)
+
+    def test_non_string_fn_is_400(self):
+        for payload_bytes in (
+            b'{"fn": 1, "text": "x"}',
+            b'{"fn": null, "text": "x"}',
+            b'{"fn": ["shout"], "text": "x"}',
+        ):
+            with self.subTest(body=payload_bytes):
+                status, payload = handle_transform(payload_bytes)
+                self.assertEqual(status, 400)
+                self.assertIn("error", payload)
+
+    def test_missing_text_with_fn_is_400(self):
+        status, payload = handle_transform(self._body(fn="shout"))
+        self.assertEqual(status, 400)
+        self.assertIn("error", payload)
+
+
+class TestListTransforms(unittest.TestCase):
+    def test_payload_shape(self):
+        # The one literal pin of the published contract.
+        self.assertEqual(
+            list_transforms(),
+            {
+                "transforms": [
+                    "initials",
+                    "reverse_words",
+                    "shout",
+                    "slugify",
+                    "title_case",
+                    "truncate",
+                ]
+            },
+        )
+
+    def test_only_one_key(self):
+        self.assertEqual(list(list_transforms()), ["transforms"])
+
+    def test_derived_from_operations(self):
+        self.assertEqual(list_transforms()["transforms"], sorted(OPERATIONS))
+
+    def test_sorted(self):
+        names = list_transforms()["transforms"]
+        self.assertEqual(names, sorted(names))
+
+    def test_every_listed_name_is_callable(self):
+        for name in list_transforms()["transforms"]:
+            with self.subTest(fn=name):
+                body = json.dumps({"fn": name, "text": SAMPLE}).encode("utf-8")
+                status, payload = handle_transform(body)
+                self.assertEqual(status, 200)
+                self.assertEqual(payload["result"], transform(name, SAMPLE))
+
+    def test_word_count_is_not_exposed(self):
+        # word_count takes one argument but returns an int, not text.
+        self.assertNotIn("word_count", list_transforms()["transforms"])
+
 
 def run_handler(method, path, headers=None, body=b""):
     """Drive PlaygroundHandler without a socket.
@@ -169,6 +262,49 @@ class TestPlaygroundHandler(unittest.TestCase):
         self.assertEqual(status, 404)
         self.assertEqual(headers["Content-Type"], "application/json; charset=utf-8")
         self.assertEqual(json.loads(body), {"error": "not found"})
+
+    def test_get_transforms_returns_json_list(self):
+        status, headers, body, _ = run_handler("GET", "/api/transforms")
+        self.assertEqual(status, 200)
+        self.assertEqual(headers["Content-Type"], "application/json; charset=utf-8")
+        self.assertEqual(json.loads(body), list_transforms())
+
+    def test_get_transforms_with_query_string(self):
+        status, _, body, _ = run_handler("GET", "/api/transforms?x=1")
+        self.assertEqual(status, 200)
+        self.assertEqual(json.loads(body), list_transforms())
+
+    def test_get_transforms_trailing_slash_is_404(self):
+        status, headers, body, _ = run_handler("GET", "/api/transforms/")
+        self.assertEqual(status, 404)
+        self.assertEqual(headers["Content-Type"], "application/json; charset=utf-8")
+        self.assertEqual(json.loads(body), {"error": "not found"})
+
+    def test_get_transform_singular_is_404(self):
+        status, headers, body, _ = run_handler("GET", "/api/transform")
+        self.assertEqual(status, 404)
+        self.assertEqual(headers["Content-Type"], "application/json; charset=utf-8")
+        self.assertEqual(json.loads(body), {"error": "not found"})
+
+    def test_post_transforms_plural_is_404(self):
+        payload = json.dumps({"fn": "shout", "text": "hi"}).encode()
+        status, headers, body, _ = self._post(payload, path="/api/transforms")
+        self.assertEqual(status, 404)
+        self.assertEqual(headers["Content-Type"], "application/json; charset=utf-8")
+        self.assertEqual(json.loads(body), {"error": "not found"})
+
+    def test_post_transform_with_fn_ok(self):
+        payload = json.dumps({"fn": "slugify", "text": "Ada Lovelace"}).encode()
+        status, headers, body, _ = self._post(payload)
+        self.assertEqual(status, 200)
+        self.assertEqual(headers["Content-Type"], "application/json; charset=utf-8")
+        self.assertEqual(json.loads(body), {"result": "ada-lovelace"})
+
+    def test_post_transform_unknown_fn_is_400(self):
+        payload = json.dumps({"fn": "nope", "text": "x"}).encode()
+        status, _, body, _ = self._post(payload)
+        self.assertEqual(status, 400)
+        self.assertIsInstance(json.loads(body)["error"], str)
 
     def test_post_transform_ok(self):
         payload = json.dumps({"op": "slugify", "text": "Ada Lovelace"}).encode()
@@ -341,6 +477,14 @@ class TestRenderPage(unittest.TestCase):
 
     def test_posts_to_the_api(self):
         self.assertIn("/api/transform", self.page)
+
+    def test_page_posts_the_fn_field(self):
+        # The page uses the canonical field name; `op` stays a legacy alias
+        # covered by the request-level tests.
+        script = self.page[self.page.index("<script>"):]
+        body = script[script.index("JSON.stringify"):]
+        self.assertIn("fn: op,", body)
+        self.assertNotIn("op: op,", body)
 
 
 if __name__ == "__main__":
