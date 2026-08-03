@@ -42,7 +42,7 @@ File: `textkit/web.py`, function `handle_transform`.
 
 File: `textkit/web.py`.
 
-- [ ] Add `list_transforms() -> dict` next to `handle_transform` (after it,
+- [x] Add `list_transforms() -> dict` next to `handle_transform` (after it,
   before `render_page`):
 
   ```python
@@ -58,7 +58,7 @@ File: `textkit/web.py`.
 
   The `Example:` section is mandatory per `CLAUDE.md`. Keep the body derived
   from `OPERATIONS` — never a literal list.
-- [ ] In `PlaygroundHandler.do_GET`, replace the single `!= "/"` guard with an
+- [x] In `PlaygroundHandler.do_GET`, replace the single `!= "/"` guard with an
   explicit route on the query-stripped path:
 
   ```python
@@ -73,9 +73,9 @@ File: `textkit/web.py`.
   ```
 
   No trailing-slash tolerance: `/api/transforms/` stays a 404.
-- [ ] `do_POST`, `_send_json`, `_send`, `MAX_BODY_BYTES`/413 handling and
+- [x] `do_POST`, `_send_json`, `_send`, `MAX_BODY_BYTES`/413 handling and
   `OPERATIONS` order are untouched.
-- [ ] Do **not** re-export anything from `textkit/__init__.py` (spec §6).
+- [x] Do **not** re-export anything from `textkit/__init__.py` (spec §6).
 
 ## Task 3: page script posts `fn`
 

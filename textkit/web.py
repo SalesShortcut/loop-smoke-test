@@ -83,6 +83,19 @@ def handle_transform(body: bytes) -> tuple[int, dict]:
         return 400, {"error": str(err)}
 
 
+def list_transforms() -> dict:
+    """Return the payload for GET /api/transforms.
+
+    The names are derived from OPERATIONS and sorted alphabetically, so the
+    advertised list always equals the set POST /api/transform accepts.
+
+    Example:
+        >>> list_transforms()["transforms"][:2]
+        ['initials', 'reverse_words']
+    """
+    return {"transforms": sorted(OPERATIONS)}
+
+
 def render_page() -> str:
     """Return the playground HTML page.
 
@@ -161,7 +174,11 @@ class PlaygroundHandler(BaseHTTPRequestHandler):
     server_version = "textkit-playground/0.1"
 
     def do_GET(self) -> None:  # noqa: N802 - name fixed by BaseHTTPRequestHandler
-        if self.path.split("?", 1)[0] != "/":
+        path = self.path.split("?", 1)[0]
+        if path == "/api/transforms":
+            self._send_json(200, list_transforms())
+            return
+        if path != "/":
             self._send_json(404, {"error": "not found"})
             return
         self._send(200, "text/html; charset=utf-8", render_page())
