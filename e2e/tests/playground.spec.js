@@ -18,7 +18,7 @@ async function applyOp(page, op, text) {
   await page.fill("#text", text);
   await page.selectOption("#op", op);
   // Wait on the transform request itself: a text-based wait would hang if a
-  // result ever legitimately equalled the "Nothing yet" placeholder.
+  // result ever legitimately equalled the placeholder text.
   const responded = page.waitForResponse("**/api/transform");
   await page.click("#apply");
   await responded;
@@ -33,7 +33,7 @@ test.describe("main user scenario", () => {
     await expect(page.locator("button#apply")).toBeVisible();
     await expect(page.locator("button#clear")).toBeVisible();
     await expect(page.locator("output#result")).toBeAttached();
-    await expect(page.locator("#result")).toHaveText("Nothing yet");
+    await expect(page.locator("#result")).toHaveText("Type something and press Apply Beza");
     await expect(page.locator("#op option")).toHaveText(
       Object.keys(OPERATIONS)
     );
@@ -55,7 +55,7 @@ test.describe("main user scenario", () => {
     await expect(page.locator("#result")).toHaveText("ada-lovelace");
     await page.click("#clear");
     await expect(page.locator("#text")).toHaveValue("");
-    await expect(page.locator("#result")).toHaveText("Nothing yet");
+    await expect(page.locator("#result")).toHaveText("Type something and press Apply Beza");
     await expect(page.locator("#op")).toHaveValue("slugify");
   });
 });

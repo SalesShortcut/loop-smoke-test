@@ -2,7 +2,7 @@
 // Spec: docs/superpowers/specs/2026-08-03-result-placeholder-design.md
 const { test, expect } = require("@playwright/test");
 
-const PLACEHOLDER = "Nothing yet";
+const PLACEHOLDER = "Type something and press Apply Beza";
 
 test.describe("result placeholder — main user scenario", () => {
   test("page opens with the placeholder, Apply replaces it, Clear restores it", async ({
@@ -33,7 +33,9 @@ test.describe("result placeholder — critical paths", () => {
     const response = await request.get("/");
     expect(response.status()).toBe(200);
     const body = await response.text();
-    expect(body).toContain('<output id="result">Nothing yet</output>');
+    expect(body).toContain(
+      '<output id="result">Type something and press Apply Beza</output>'
+    );
   });
 
   test("clear on a pristine page keeps the placeholder", async ({ page }) => {

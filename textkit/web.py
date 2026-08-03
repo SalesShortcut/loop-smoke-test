@@ -26,7 +26,7 @@ DEFAULT_PORT = 3000
 MAX_BODY_BYTES = 64 * 1024
 
 # Shown in the result area before the first transform and after Clear.
-RESULT_PLACEHOLDER = "Nothing yet"
+RESULT_PLACEHOLDER = "Type something and press Apply Beza"
 
 
 def transform(op: str, text: str) -> str:
