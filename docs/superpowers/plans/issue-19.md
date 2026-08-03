@@ -15,7 +15,7 @@ Baseline before starting: 75 tests, green.
 
 File: `textkit/web.py`, function `handle_transform`.
 
-- [ ] Replace the two lines that read `op` / `text` from the payload with the
+- [x] Replace the two lines that read `op` / `text` from the payload with the
   aliasing lookup from the spec (§1):
 
   ```python
@@ -29,14 +29,14 @@ File: `textkit/web.py`, function `handle_transform`.
 
   Use `"fn" in payload` — **not** `payload.get("fn") or payload.get("op")` —
   so `{"fn": 1, "op": "shout"}` is a 400 rather than silently running `shout`.
-- [ ] Pass `name` to `transform(...)`. Do **not** rename `transform`'s
+- [x] Pass `name` to `transform(...)`. Do **not** rename `transform`'s
   parameter or change its `ValueError` message (`unknown op: ...`); its
   doctest pins that text and `tests/test_web.py` pins the behaviour.
-- [ ] Update the `handle_transform` docstring: the `Example:` call becomes
+- [x] Update the `handle_transform` docstring: the `Example:` call becomes
   `handle_transform(b'{"fn": "shout", "text": "hi"}')` → `(200, {'result': 'HI'})`,
   and one prose sentence records that `op` is accepted as a legacy alias and
   that `fn` wins when both are present.
-- [ ] Verify by hand that nothing else in the module reads `payload["op"]`.
+- [x] Verify by hand that nothing else in the module reads `payload["op"]`.
 
 ## Task 2: `GET /api/transforms`
 
