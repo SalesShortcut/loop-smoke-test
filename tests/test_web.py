@@ -235,9 +235,27 @@ class TestRenderPage(unittest.TestCase):
             '<button id="apply"',
             '<button id="clear"',
             '<output id="result"',
+            'id="charcount"',
         ):
             with self.subTest(fragment=fragment):
                 self.assertIn(fragment, self.page)
+
+    def test_charcount_starts_at_zero_below_the_textarea(self):
+        # Live updating is exercised end-to-end; here we pin the markup contract.
+        self.assertIn('<div id="charcount">0 characters</div>', self.page)
+        self.assertLess(
+            self.page.index('<textarea id="text"'),
+            self.page.index('<div id="charcount">'),
+        )
+
+    def test_charcount_is_wired_to_input_and_clear(self):
+        script = self.page[self.page.index("<script>"):]
+        self.assertIn('getElementById("charcount")', script)
+        self.assertIn('addEventListener("input"', script)
+        self.assertIn(' + " characters"', script)
+        # The clear handler must reset the counter to zero.
+        clear_handler = script[script.index('getElementById("clear")'):]
+        self.assertIn("showCount(0)", clear_handler)
 
     def test_clear_button_is_labelled_and_wired(self):
         # Clearing behavior itself is exercised end-to-end in
