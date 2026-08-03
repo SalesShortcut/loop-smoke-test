@@ -13,6 +13,7 @@ const OPERATIONS = {
   initials: "A.L.W.A.M.",
   reverse_words: "mathematician a was Lovelace Ada",
   truncate: "Ada Lovelace was...",
+  title_case: "Ada Lovelace Was a Mathematician",
 };
 
 async function applyOp(page, op, text) {

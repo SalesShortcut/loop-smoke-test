@@ -28,7 +28,7 @@ operations are demonstrated, so it has to be reachable from the page.
   `truncate`).
 - Casing rule: each word becomes `word[0].upper() + word[1:].lower()`.
 - Connector words stay lowercase **unless they are the first word**. The
-  connector set is exactly the nine words named in the issue, matched
+  connector set is exactly the eight words named in the issue, matched
   case-insensitively:
   `a, an, the, and, or, of, in, on`.
   It lives in `core.py` as a module-level frozenset constant

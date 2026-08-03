@@ -1,6 +1,9 @@
 import re
 import unicodedata
 
+# Words that stay lowercase inside a title, unless they come first.
+TITLE_CASE_CONNECTORS = frozenset({"a", "an", "the", "and", "or", "of", "in", "on"})
+
 
 def word_count(text: str) -> int:
     """Count whitespace-separated words in text."""
@@ -34,6 +37,26 @@ def shout(text: str) -> str:
         'ADA LOVELACE'
     """
     return text.upper()
+
+
+def title_case(text: str) -> str:
+    """Return text in headline form, with connector words kept lowercase.
+
+    Every whitespace-separated word gets an uppercase first character and a
+    lowercase remainder. The connectors in TITLE_CASE_CONNECTORS stay
+    lowercase unless they are the first word. Runs of whitespace collapse to
+    a single space.
+
+    Example:
+        >>> title_case("ada lovelace and the analytical engine")
+        'Ada Lovelace and the Analytical Engine'
+    """
+    return " ".join(
+        word.lower()
+        if index and word.lower() in TITLE_CASE_CONNECTORS
+        else word[0].upper() + word[1:].lower()
+        for index, word in enumerate(text.split())
+    )
 
 
 def initials(name: str) -> str:

@@ -41,13 +41,26 @@ class TestTransform(unittest.TestCase):
     def test_truncate_width_is_20(self):
         self.assertEqual(TRUNCATE_WIDTH, 20)
 
+    def test_title_case_matches_core(self):
+        self.assertEqual(transform("title_case", SAMPLE), core.title_case(SAMPLE))
+        self.assertEqual(
+            transform("title_case", SAMPLE), "Ada Lovelace Was a Mathematician"
+        )
+
     def test_scenario_from_spec(self):
         self.assertEqual(transform("slugify", "Ada Lovelace"), "ada-lovelace")
 
     def test_supported_ops(self):
         self.assertEqual(
             sorted(OPERATIONS),
-            ["initials", "reverse_words", "shout", "slugify", "truncate"],
+            [
+                "initials",
+                "reverse_words",
+                "shout",
+                "slugify",
+                "title_case",
+                "truncate",
+            ],
         )
 
     def test_unknown_op_raises(self):
@@ -235,6 +248,7 @@ class TestRenderPage(unittest.TestCase):
             '<select id="op"',
             '<button id="apply"',
             '<button id="clear"',
+            '<button id="title-case"',
             '<output id="result"',
             'id="charcount"',
             'id="footer"',
@@ -287,11 +301,25 @@ class TestRenderPage(unittest.TestCase):
         script = self.page[self.page.index("<script>"):]
         self.assertIn('getElementById("clear")', script)
 
+    def test_title_case_button_is_labelled_and_wired(self):
+        # The click behaviour is exercised end-to-end in
+        # e2e/tests/title-case.spec.js; here we only pin the markup contract.
+        self.assertIn(
+            '<button id="title-case" type="button">Title Case</button>', self.page
+        )
+        script = self.page[self.page.index("<script>"):]
+        self.assertIn('getElementById("title-case")', script)
+        self.assertIn('"title_case"', script)
+        # The button follows Clear in document order.
+        self.assertLess(
+            self.page.index('id="clear"'), self.page.index('id="title-case"')
+        )
+
     def test_footer_counts_the_operations(self):
         # The literal count is pinned by the plan; test_supported_ops already
         # pins the operation set itself.
         self.assertIn(
-            '<footer id="footer">textkit playground · 5 operations</footer>',
+            '<footer id="footer">textkit playground · 6 operations</footer>',
             self.page,
         )
 

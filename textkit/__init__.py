@@ -3,6 +3,7 @@ from .core import (
     reverse_words,
     shout,
     slugify,
+    title_case,
     truncate,
     word_count,
 )
@@ -12,6 +13,7 @@ __all__ = [
     "reverse_words",
     "shout",
     "slugify",
+    "title_case",
     "truncate",
     "word_count",
 ]
