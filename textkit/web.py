@@ -106,6 +106,7 @@ def render_page() -> str:
     <button id="clear" type="button">Clear</button>
   </p>
   <p><output id="result">{html.escape(RESULT_PLACEHOLDER)}</output></p>
+  <footer id="footer">textkit playground · {len(OPERATIONS)} operations</footer>
   <script>
     document.getElementById("apply").addEventListener("click", async () => {{
       const out = document.getElementById("result");

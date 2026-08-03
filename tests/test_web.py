@@ -237,6 +237,7 @@ class TestRenderPage(unittest.TestCase):
             '<button id="clear"',
             '<output id="result"',
             'id="charcount"',
+            'id="footer"',
         ):
             with self.subTest(fragment=fragment):
                 self.assertIn(fragment, self.page)
@@ -293,6 +294,22 @@ class TestRenderPage(unittest.TestCase):
 
     def test_posts_to_the_api(self):
         self.assertIn("/api/transform", self.page)
+
+    def test_footer_counts_the_operations(self):
+        # N comes from OPERATIONS at render time; today that is 5.
+        self.assertEqual(len(OPERATIONS), 5)
+        self.assertIn("5 operations", self.page)
+        self.assertIn(
+            f'<footer id="footer">textkit playground · '
+            f'{len(OPERATIONS)} operations</footer>',
+            self.page,
+        )
+
+    def test_footer_sits_below_the_result(self):
+        self.assertLess(
+            self.page.index('<output id="result"'),
+            self.page.index('<footer id="footer">'),
+        )
 
 
 if __name__ == "__main__":
