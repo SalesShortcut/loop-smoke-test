@@ -135,7 +135,7 @@ def render_page() -> str:
           method: "POST",
           headers: {{"Content-Type": "application/json"}},
           body: JSON.stringify({{
-            op: op,
+            fn: op,
             text: document.getElementById("text").value,
           }}),
         }});

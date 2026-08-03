@@ -81,12 +81,12 @@ File: `textkit/web.py`.
 
 File: `textkit/web.py`, `render_page`.
 
-- [ ] In the `applyOp` helper, change the request body from `op: op,` to
+- [x] In the `applyOp` helper, change the request body from `op: op,` to
   `fn: op,` (the JS parameter name may stay `op`; only the JSON key changes).
-- [ ] Nothing else in the page changes: ids, labels, `#title-case`, the char
+- [x] Nothing else in the page changes: ids, labels, `#title-case`, the char
   counter, Clear, `RESULT_PLACEHOLDER`, the footer count.
-- [ ] Watch the f-string: literal `{`/`}` inside the script stay doubled.
-- [ ] Sanity check: `python3 -c "from textkit.web import render_page; print('fn:' in render_page())"`.
+- [x] Watch the f-string: literal `{`/`}` inside the script stay doubled.
+- [x] Sanity check: `python3 -c "from textkit.web import render_page; print('fn:' in render_page())"`.
 
 ## Task 4: unit tests
 
