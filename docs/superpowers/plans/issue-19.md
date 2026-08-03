@@ -145,7 +145,7 @@ coverage for the legacy alias (spec §1).
 
 ## Task 5: e2e + README
 
-- [ ] New `e2e/tests/json-api.spec.js`, header comment pointing at
+- [x] New `e2e/tests/json-api.spec.js`, header comment pointing at
   `docs/superpowers/specs/issue-19-design.md`, request-level only (no page
   interaction needed):
   - `GET /api/transforms` → 200, `content-type` header contains
@@ -159,9 +159,9 @@ coverage for the legacy alias (spec §1).
   - `POST /api/transform` malformed body `"{not json"` → 400 with a string
     `error`.
   - `GET /api/transforms/` → 404.
-- [ ] `e2e/tests/playground.spec.js` and `e2e/tests/title-case.spec.js` keep
+- [x] `e2e/tests/playground.spec.js` and `e2e/tests/title-case.spec.js` keep
   posting `op` — leave them alone; they are the alias's e2e coverage.
-- [ ] `README.md`: add a short `## HTTP API` section documenting both
+- [x] `README.md`: add a short `## HTTP API` section documenting both
   endpoints, the request/response shapes, the 400 shape, and one sentence
   noting `op` is a deprecated alias of `fn`. Two `curl` examples, no more.
 
