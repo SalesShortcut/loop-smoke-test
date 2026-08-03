@@ -237,6 +237,7 @@ class TestRenderPage(unittest.TestCase):
             '<button id="clear"',
             '<output id="result"',
             'id="charcount"',
+            'id="footer"',
         ):
             with self.subTest(fragment=fragment):
                 self.assertIn(fragment, self.page)
@@ -285,6 +286,26 @@ class TestRenderPage(unittest.TestCase):
         self.assertIn('<button id="clear" type="button">Clear</button>', self.page)
         script = self.page[self.page.index("<script>"):]
         self.assertIn('getElementById("clear")', script)
+
+    def test_footer_counts_the_operations(self):
+        # Rendered server-side, so the count is pinned literally here and
+        # cross-checked against OPERATIONS.
+        self.assertIn(
+            '<footer id="footer">textkit playground · 5 operations</footer>',
+            self.page,
+        )
+        self.assertEqual(len(OPERATIONS), 5)
+
+    def test_footer_follows_the_result(self):
+        self.assertLess(
+            self.page.index('<output id="result"'),
+            self.page.index('<footer id="footer">'),
+        )
+
+    def test_footer_is_static(self):
+        # No script touches the footer: it never changes after load.
+        script = self.page[self.page.index("<script>"):]
+        self.assertNotIn("footer", script)
 
     def test_one_option_per_operation(self):
         for op in OPERATIONS:
