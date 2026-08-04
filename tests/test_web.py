@@ -48,6 +48,12 @@ class TestTransform(unittest.TestCase):
             transform("title_case", SAMPLE), "Ada Lovelace Was a Mathematician"
         )
 
+    def test_snake_case_matches_core(self):
+        self.assertEqual(transform("snake_case", SAMPLE), core.snake_case(SAMPLE))
+        self.assertEqual(
+            transform("snake_case", SAMPLE), "ada_lovelace_was_a_mathematician"
+        )
+
     def test_scenario_from_spec(self):
         self.assertEqual(transform("slugify", "Ada Lovelace"), "ada-lovelace")
 
@@ -59,6 +65,7 @@ class TestTransform(unittest.TestCase):
                 "reverse_words",
                 "shout",
                 "slugify",
+                "snake_case",
                 "title_case",
                 "truncate",
             ],
@@ -196,6 +203,7 @@ class TestListTransforms(unittest.TestCase):
                     "reverse_words",
                     "shout",
                     "slugify",
+                    "snake_case",
                     "title_case",
                     "truncate",
                 ]
@@ -459,7 +467,7 @@ class TestRenderPage(unittest.TestCase):
         # The literal count is pinned by the plan; test_supported_ops already
         # pins the operation set itself.
         self.assertIn(
-            '<footer id="footer">textkit playground · 6 operations</footer>',
+            '<footer id="footer">textkit playground · 7 operations</footer>',
             self.page,
         )
 

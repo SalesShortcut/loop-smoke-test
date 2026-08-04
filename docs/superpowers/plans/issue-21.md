@@ -211,7 +211,7 @@ If `TestSlugify` fails here, `_ascii_slug` was transcribed wrongly — the regex
 - Modify: `textkit/web.py` (the `OPERATIONS` dict)
 - Test: `tests/test_web.py`
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 In `tests/test_web.py`, add this method to `class TestTransform`, immediately after
 `test_title_case_matches_core`:
@@ -224,12 +224,12 @@ In `tests/test_web.py`, add this method to `class TestTransform`, immediately af
         )
 ```
 
-- [ ] **Step 2: Run it to verify it fails**
+- [x] **Step 2: Run it to verify it fails**
 
 Run: `python3 -m unittest tests.test_web.TestTransform.test_snake_case_matches_core -v`
 Expected: FAIL — `ValueError: unknown op: 'snake_case'`.
 
-- [ ] **Step 3: Write the implementation**
+- [x] **Step 3: Write the implementation**
 
 In `textkit/web.py`, append one entry to `OPERATIONS`, **after** `title_case` (dict order is
 the `<select>` option order; appending leaves every existing option where it is):
@@ -250,7 +250,7 @@ Registered directly, not through a lambda — `snake_case` takes only `text`. No
 `web.py` changes: no edit to `render_page`, `handle_transform`, `list_transforms` or the
 handler class.
 
-- [ ] **Step 4: Run it to verify it passes**
+- [x] **Step 4: Run it to verify it passes**
 
 Run: `python3 -m unittest tests.test_web.TestTransform.test_snake_case_matches_core -v`
 Expected: `OK`.
@@ -264,13 +264,13 @@ Expected: `OK`.
 
 Three existing tests hard-code the six operations and now fail. Fix each one.
 
-- [ ] **Step 1: Run the suite to see exactly which tests broke**
+- [x] **Step 1: Run the suite to see exactly which tests broke**
 
 Run: `python3 -m unittest discover -s tests 2>&1 | tail -20`
 Expected: 3 failures — `test_supported_ops`, `test_payload_shape`,
 `test_footer_counts_the_operations`.
 
-- [ ] **Step 2: Update `TestTransform.test_supported_ops`**
+- [x] **Step 2: Update `TestTransform.test_supported_ops`**
 
 The expected list is `sorted(...)`, so `snake_case` goes between `slugify` and `title_case`:
 
@@ -290,7 +290,7 @@ The expected list is `sorted(...)`, so `snake_case` goes between `slugify` and `
         )
 ```
 
-- [ ] **Step 3: Update `TestListTransforms.test_payload_shape`**
+- [x] **Step 3: Update `TestListTransforms.test_payload_shape`**
 
 ```python
     def test_payload_shape(self):
@@ -311,7 +311,7 @@ The expected list is `sorted(...)`, so `snake_case` goes between `slugify` and `
         )
 ```
 
-- [ ] **Step 4: Update `TestRenderPage.test_footer_counts_the_operations`**
+- [x] **Step 4: Update `TestRenderPage.test_footer_counts_the_operations`**
 
 The footer is generated from `len(OPERATIONS)`, which is now 7:
 
@@ -328,7 +328,7 @@ The footer is generated from `len(OPERATIONS)`, which is now 7:
 Keep the `·` character exactly as it is in the file (U+00B7 middle dot, surrounded by
 ordinary spaces).
 
-- [ ] **Step 5: Run the full suite**
+- [x] **Step 5: Run the full suite**
 
 Run: `python3 -m unittest discover -s tests -v 2>&1 | tail -5`
 Expected: `Ran 107 tests` … `OK` (97 baseline + 9 from Task 1 + 1 from Task 2).
