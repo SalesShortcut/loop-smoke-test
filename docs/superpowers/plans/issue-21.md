@@ -348,7 +348,7 @@ Do **not** touch `test_every_op_returns_200`, `test_one_option_per_operation`,
 These four files hard-code the six operations. Playwright is not installed in this sandbox
 (there is no `e2e/node_modules`), so the edits are made now and verified in Task 6.
 
-- [ ] **Step 1: `e2e/tests/playground.spec.js` — append to the `OPERATIONS` map**
+- [x] **Step 1: `e2e/tests/playground.spec.js` — append to the `OPERATIONS` map**
 
 The map's key order is asserted against the rendered option order
 (`toHaveText(Object.keys(OPERATIONS))`), so `snake_case` must be **last**, matching the dict
@@ -368,14 +368,14 @@ const OPERATIONS = {
 
 The `critical paths` loop below it then covers the new operation with no further edit.
 
-- [ ] **Step 2: `e2e/tests/footer.spec.js` — bump the count**
+- [x] **Step 2: `e2e/tests/footer.spec.js` — bump the count**
 
 ```javascript
 // Locked decision: exact text with a middle-dot separator, N = 7 operations.
 const FOOTER_TEXT = "textkit playground · 7 operations";
 ```
 
-- [ ] **Step 3: `e2e/tests/json-api.spec.js` — extend `NAMES`**
+- [x] **Step 3: `e2e/tests/json-api.spec.js` — extend `NAMES`**
 
 This list is compared with the sorted `GET /api/transforms` payload, so `snake_case` goes
 between `slugify` and `title_case`:
@@ -392,7 +392,7 @@ const NAMES = [
 ];
 ```
 
-- [ ] **Step 4: `e2e/tests/issue-19-consumer.spec.js` — extend the inline list**
+- [x] **Step 4: `e2e/tests/issue-19-consumer.spec.js` — extend the inline list**
 
 Inside `test("discover transforms, apply title_case, get a friendly error on a typo", ...)`:
 
@@ -408,7 +408,7 @@ Inside `test("discover transforms, apply title_case, get a friendly error on a t
     ]);
 ```
 
-- [ ] **Step 5: Confirm nothing else pins the set**
+- [x] **Step 5: Confirm nothing else pins the set**
 
 Run: `grep -rn "reverse_words" e2e/tests/`
 Expected: hits only in `playground.spec.js`, `json-api.spec.js` and

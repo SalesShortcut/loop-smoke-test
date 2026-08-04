@@ -7,6 +7,7 @@ const NAMES = [
   "reverse_words",
   "shout",
   "slugify",
+  "snake_case",
   "title_case",
   "truncate",
 ];

@@ -3,8 +3,8 @@
 const { test, expect } = require("@playwright/test");
 const { PLACEHOLDER } = require("./constants");
 
-// Locked decision: exact text with a middle-dot separator, N = 6 operations.
-const FOOTER_TEXT = "textkit playground · 6 operations";
+// Locked decision: exact text with a middle-dot separator, N = 7 operations.
+const FOOTER_TEXT = "textkit playground · 7 operations";
 
 test.describe("footer main scenario", () => {
   test("the bottom of the page shows the operation count", async ({ page }) => {
