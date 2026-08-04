@@ -535,17 +535,17 @@ catches syntax errors.)
 
 **Files:** none modified.
 
-- [ ] **Step 1: Full unit suite**
+- [x] **Step 1: Full unit suite**
 
 Run: `python3 -m unittest discover -s tests -v 2>&1 | tail -5`
 Expected: `Ran 107 tests` … `OK`.
 
-- [ ] **Step 2: Confirm the normalisation is shared, not duplicated**
+- [x] **Step 2: Confirm the normalisation is shared, not duplicated**
 
 Run: `grep -c 'unicodedata.normalize' textkit/core.py`
 Expected: `1`.
 
-- [ ] **Step 3: Start the server and check the HTTP surface**
+- [x] **Step 3: Start the server and check the HTTP surface**
 
 ```bash
 TEXTKIT_PORT=3000 python3 -m textkit.web &
@@ -569,7 +569,7 @@ Expected, in order:
 
 Stop the server afterwards (`kill %1`).
 
-- [ ] **Step 4: Playwright suite (best effort)**
+- [x] **Step 4: Playwright suite (best effort)**
 
 The suite is not installed in this sandbox. With the server from Step 3 still running on
 port 3000:
