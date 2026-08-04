@@ -595,7 +595,17 @@ e2e edits from Tasks 4 and 5.
 **Files:**
 - Modify: `CHANGELOG.md`
 
-- [ ] **Step 1: Append the changelog entry**
+> **Deviation from the plan, recorded during execution:** the execution instruction for this
+> run required *a commit after each completed task*, so the change landed in six commits
+> instead of the one this task assumed. Tasks 2 and 3 share a single commit — registering the
+> operation and updating the three set-pinning tests separately would leave an intermediate
+> commit with a red suite (a code-review finding; the history was rebuilt to fix it). Because
+> the `changelog` skill's rule 4 says the entry is committed *with the feature commit, not
+> separately*, `CHANGELOG.md` was appended and committed in Task 1 (`2c6d4a5`, the commit
+> that introduces the public `snake_case` function) rather than in a changelog-only commit
+> here. Steps 1–4 below are therefore verified rather than re-executed.
+
+- [x] **Step 1: Append the changelog entry**
 
 Per the `changelog` skill (`.claude/skills/changelog/SKILL.md`): one line, appended to the
 **end** of `CHANGELOG.md`, format `- YYYY-MM-DD: <имя функции> — <описание на русском>`:
@@ -607,13 +617,13 @@ Per the `changelog` skill (`.claude/skills/changelog/SKILL.md`): one line, appen
 Use the actual current UTC date if it has moved past 2026-08-04. Do not add a heading, a
 blank line or a second entry.
 
-- [ ] **Step 2: Check nothing forbidden is about to be staged**
+- [x] **Step 2: Check nothing forbidden is about to be staged**
 
 Run: `git status --porcelain`
 Expected: only the files in the File Structure table above. No `__pycache__/`, no `*.pyc`
 (they are in `.gitignore` — do not force-add them).
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add textkit/core.py textkit/__init__.py textkit/web.py \
@@ -628,7 +638,7 @@ git commit -m "[textkit] feat: snake_case — операция snake_case в cor
 The `[textkit] ` prefix is mandatory (`CLAUDE.md`). Do **not** `git push` and do **not**
 switch branches.
 
-- [ ] **Step 4: Confirm the commit**
+- [x] **Step 4: Confirm the commit**
 
 Run: `git show --stat HEAD`
 Expected: 11 files changed, message starting with `[textkit] `.
