@@ -53,7 +53,7 @@ green but uncommitted. The commit message must start with `[textkit] ` (`CLAUDE.
 - Modify: `textkit/core.py`
 - Test: `tests/test_core.py`
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 In `tests/test_core.py`, add `snake_case` to the existing `from textkit import (...)` block
 (alphabetically, between `shout` and `slugify` — the block is sorted, so the result is
@@ -107,12 +107,12 @@ That is 9 test methods. `test_non_latin_scripts_are_dropped` makes two assertion
 `test_shares_slugify_normalisation` uses `subTest`, but each still counts as one test, so
 `TestSnakeCase` contributes 9 to the suite total (97 baseline → 106 after this task).
 
-- [ ] **Step 2: Run the tests to verify they fail**
+- [x] **Step 2: Run the tests to verify they fail**
 
 Run: `python3 -m unittest discover -s tests -v 2>&1 | tail -5`
 Expected: FAIL — `ImportError: cannot import name 'snake_case' from 'textkit'`.
 
-- [ ] **Step 3: Write the implementation**
+- [x] **Step 3: Write the implementation**
 
 In `textkit/core.py`, replace the whole existing `slugify` function with the helper plus the
 two public functions. The `_ascii_slug` helper goes directly above `slugify`; `snake_case`
@@ -167,7 +167,7 @@ def snake_case(text: str) -> str:
 imports: `re` and `unicodedata` are already imported at the top of `core.py`. The `Example:`
 section in `snake_case`'s docstring is mandatory per `CLAUDE.md`.
 
-- [ ] **Step 4: Export the new function**
+- [x] **Step 4: Export the new function**
 
 In `textkit/__init__.py`, add `snake_case` to both lists, between `slugify` and `title_case`:
 
@@ -195,7 +195,7 @@ __all__ = [
 ]
 ```
 
-- [ ] **Step 5: Run the tests to verify they pass**
+- [x] **Step 5: Run the tests to verify they pass**
 
 Run: `python3 -m unittest discover -s tests -v 2>&1 | tail -5`
 Expected: `Ran 106 tests` … `OK`. (Baseline before this plan is 97; Task 2 adds the 107th.)
