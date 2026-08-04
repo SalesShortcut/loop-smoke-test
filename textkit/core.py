@@ -10,6 +10,18 @@ def word_count(text: str) -> int:
     return len(text.split())
 
 
+def _ascii_slug(text: str, separator: str) -> str:
+    """Fold text to lowercase ASCII, joining the surviving runs with separator.
+
+    Shared by slugify and snake_case so the two agree on accents and
+    punctuation; the separator is the only difference between them.
+    """
+    ascii_text = (
+        unicodedata.normalize("NFKD", text).encode("ascii", "ignore").decode("ascii")
+    )
+    return re.sub(r"[^a-z0-9]+", separator, ascii_text.lower()).strip(separator)
+
+
 def slugify(text: str) -> str:
     """Return a URL-safe ASCII slug built from text.
 
@@ -23,10 +35,23 @@ def slugify(text: str) -> str:
         >>> slugify("Café au lait")
         'cafe-au-lait'
     """
-    ascii_text = (
-        unicodedata.normalize("NFKD", text).encode("ascii", "ignore").decode("ascii")
-    )
-    return re.sub(r"[^a-z0-9]+", "-", ascii_text.lower()).strip("-")
+    return _ascii_slug(text, "-")
+
+
+def snake_case(text: str) -> str:
+    """Return text as a snake_case ASCII identifier.
+
+    Normalisation is identical to slugify — NFKD-fold to ASCII, lowercase,
+    collapse every run of other characters — but the separator is "_", and
+    leading and trailing separators are stripped.
+
+    Example:
+        >>> snake_case("Ada Lovelace")
+        'ada_lovelace'
+        >>> snake_case("Café au lait")
+        'cafe_au_lait'
+    """
+    return _ascii_slug(text, "_")
 
 
 def shout(text: str) -> str:

@@ -14,6 +14,7 @@ const OPERATIONS = {
   reverse_words: "mathematician a was Lovelace Ada",
   truncate: "Ada Lovelace was...",
   title_case: "Ada Lovelace Was a Mathematician",
+  snake_case: "ada_lovelace_was_a_mathematician",
 };
 
 async function applyOp(page, op, text) {

@@ -19,6 +19,7 @@ test.describe("issue-19 — main consumer scenario (request-level)", () => {
       "reverse_words",
       "shout",
       "slugify",
+      "snake_case",
       "title_case",
       "truncate",
     ]);

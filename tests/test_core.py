@@ -5,6 +5,7 @@ from textkit import (
     reverse_words,
     shout,
     slugify,
+    snake_case,
     title_case,
     truncate,
     word_count,
@@ -36,6 +37,47 @@ class TestSlugify(unittest.TestCase):
     def test_non_latin_scripts_are_dropped(self):
         self.assertEqual(slugify("Привет"), "")
         self.assertEqual(slugify("Привет ada"), "ada")
+
+
+class TestSnakeCase(unittest.TestCase):
+    def test_simple(self):
+        self.assertEqual(snake_case("Ada Lovelace"), "ada_lovelace")
+
+    def test_punctuation_collapses(self):
+        self.assertEqual(snake_case("  Hello, World!!  "), "hello_world")
+
+    def test_empty(self):
+        self.assertEqual(snake_case(""), "")
+
+    def test_diacritics_reduce_to_ascii(self):
+        self.assertEqual(snake_case("Café au lait"), "cafe_au_lait")
+
+    def test_non_latin_scripts_are_dropped(self):
+        self.assertEqual(snake_case("Привет"), "")
+        self.assertEqual(snake_case("Привет ada"), "ada")
+
+    def test_hyphens_become_underscores(self):
+        self.assertEqual(snake_case("kebab-case-text"), "kebab_case_text")
+
+    def test_repeated_underscores_collapse_and_strip(self):
+        self.assertEqual(snake_case("__already__snake__"), "already_snake")
+
+    def test_digits_are_kept(self):
+        self.assertEqual(snake_case("1.5 kg"), "1_5_kg")
+
+    def test_shares_slugify_normalisation(self):
+        # Requirement 4 of the spec: the ASCII folding and collapsing logic is
+        # shared, so the two functions differ only in the separator.
+        for text in (
+            "Ada Lovelace",
+            "Café au lait",
+            "  Hello, World!!  ",
+            "Привет ada",
+            "1.5 kg",
+            "",
+        ):
+            with self.subTest(text=text):
+                self.assertEqual(snake_case(text), slugify(text).replace("-", "_"))
 
 
 class TestShout(unittest.TestCase):

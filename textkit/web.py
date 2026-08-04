@@ -21,6 +21,7 @@ OPERATIONS = {
     "reverse_words": core.reverse_words,
     "truncate": lambda text: core.truncate(text, TRUNCATE_WIDTH),
     "title_case": core.title_case,
+    "snake_case": core.snake_case,
 }
 
 DEFAULT_PORT = 3000
