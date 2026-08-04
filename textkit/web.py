@@ -50,12 +50,17 @@ def transform(op: str, text: str) -> str:
 def handle_transform(body: bytes) -> tuple[int, dict]:
     """Turn a POST /api/transform body into an HTTP status and JSON payload.
 
+    The transform name is read from ``fn``; ``op`` is accepted as a legacy
+    alias, and ``fn`` wins whenever it is present — even when its value is
+    invalid, so a caller sending ``fn`` is never silently served by a stale
+    ``op``.
+
     A well-formed request yields ``(200, {"result": ...})``; malformed JSON,
-    a missing or non-string field, or an unknown op yields
+    a missing or non-string field, or an unknown name yields
     ``(400, {"error": ...})``.
 
     Example:
-        >>> handle_transform(b'{"op": "shout", "text": "hi"}')
+        >>> handle_transform(b'{"fn": "shout", "text": "hi"}')
         (200, {'result': 'HI'})
     """
     try:
@@ -65,17 +70,30 @@ def handle_transform(body: bytes) -> tuple[int, dict]:
     if not isinstance(payload, dict):
         return 400, {"error": "body must be a JSON object"}
 
-    op = payload.get("op")
+    name = payload["fn"] if "fn" in payload else payload.get("op")
     text = payload.get("text")
-    if not isinstance(op, str):
-        return 400, {"error": '"op" must be a string'}
+    if not isinstance(name, str):
+        return 400, {"error": '"fn" must be a string'}
     if not isinstance(text, str):
         return 400, {"error": '"text" must be a string'}
 
     try:
-        return 200, {"result": transform(op, text)}
+        return 200, {"result": transform(name, text)}
     except ValueError as err:
         return 400, {"error": str(err)}
+
+
+def list_transforms() -> dict:
+    """Return the payload for GET /api/transforms.
+
+    The names are derived from OPERATIONS and sorted alphabetically, so the
+    advertised list always equals the set POST /api/transform accepts.
+
+    Example:
+        >>> list_transforms()["transforms"][:2]
+        ['initials', 'reverse_words']
+    """
+    return {"transforms": sorted(OPERATIONS)}
 
 
 def render_page() -> str:
@@ -117,7 +135,7 @@ def render_page() -> str:
           method: "POST",
           headers: {{"Content-Type": "application/json"}},
           body: JSON.stringify({{
-            op: op,
+            fn: op,
             text: document.getElementById("text").value,
           }}),
         }});
@@ -156,7 +174,11 @@ class PlaygroundHandler(BaseHTTPRequestHandler):
     server_version = "textkit-playground/0.1"
 
     def do_GET(self) -> None:  # noqa: N802 - name fixed by BaseHTTPRequestHandler
-        if self.path.split("?", 1)[0] != "/":
+        path = self.path.split("?", 1)[0]
+        if path == "/api/transforms":
+            self._send_json(200, list_transforms())
+            return
+        if path != "/":
             self._send_json(404, {"error": "not found"})
             return
         self._send(200, "text/html; charset=utf-8", render_page())

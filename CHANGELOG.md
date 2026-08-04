@@ -15,3 +15,5 @@
 - 2026-08-03: render_page (result placeholder) — текст плейсхолдера изменён на «Type something and press Apply Beza» по фидбеку ревьюера
 - 2026-08-03: render_page (footer) — футер «textkit playground · N operations» с числом операций внизу страницы
 - 2026-08-03: title_case — заглавные буквы в словах, служебные слова строчными
+- 2026-08-03: handle_transform (fn) — POST /api/transform принимает поле fn (op — устаревший синоним)
+- 2026-08-03: list_transforms — GET /api/transforms отдаёт отсортированный список преобразований
