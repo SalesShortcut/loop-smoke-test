@@ -422,7 +422,7 @@ Expected: hits only in `playground.spec.js`, `json-api.spec.js` and
 **Files:**
 - Create: `e2e/tests/snake-case.spec.js`
 
-- [ ] **Step 1: Write the spec file**
+- [x] **Step 1: Write the spec file**
 
 ```javascript
 // E2E scenarios for the playground snake_case operation.
@@ -523,7 +523,7 @@ test.describe("snake_case — API critical paths (request-level)", () => {
 });
 ```
 
-- [ ] **Step 2: Sanity-check the file parses**
+- [x] **Step 2: Sanity-check the file parses**
 
 Run: `node --check e2e/tests/snake-case.spec.js`
 Expected: no output, exit status 0. (If `node` is unavailable, skip this step — Task 6
